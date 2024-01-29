@@ -31,25 +31,24 @@ fs.createReadStream('LE.txt')
 
 app.get('/spare-parts', (req, res) => {
     let csvcopy = csvdata
-    let searchbfr = []
+    let searchresult = []
     const pagenumber = req.query.page || 1;
     const startindex = (pagenumber - 1) * pagesize;
     const endindex = startindex + pagesize;
 
     csvheaders.forEach(function(search) {
         if (_.has(req.query, search)) {
-            console.log(search, req.query[search])
             _.each(csvcopy, function(value, key) {
                 if (_.startsWith(_.toLower(value[search]), _.toLower(req.query[search]))) {
-                    console.log(value)
-                    searchbfr.push(value)
+                    searchresult.push(value)
                 }
             })
         }
     });
 
-    if (searchbfr) {
-        csvcopy = searchbfr
+    
+    if (searchresult.length > 0) {
+        csvcopy = searchresult
     }
 
     if (req.query.sort) {
@@ -64,7 +63,7 @@ app.get('/spare-parts', (req, res) => {
 
 app.get('/spare-parts/search/:search', (req, res) => {
     let csvcopy = csvdata
-    let searchbfr = []
+    let searchresult = []
     const search = req.params.search
     const pagenumber = req.query.page || 1;
     const startindex = (pagenumber - 1) * pagesize;
@@ -72,17 +71,15 @@ app.get('/spare-parts/search/:search', (req, res) => {
     console.log(search)
 
     csvheaders.forEach(function(header) {
-        console.log(header, search)
         _.each(csvcopy, function(value, key) {
             if (_.startsWith(_.toLower(value[header]), _.toLower(search))) {
-                console.log(value)
-                searchbfr.push(value)
+                searchresult.push(value)
             }
         })
     });
 
-    if (searchbfr) {
-        csvcopy = searchbfr
+    if (searchresult) {
+        csvcopy = searchresult
     } 
 
     if (req.query.sort) {
